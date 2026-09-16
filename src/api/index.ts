@@ -14,7 +14,7 @@ export const userApi = {
 export const commonApi = {
   categories: () => unwrap<Category[]>(http.get('/categories')),
   announcements: (params: Params = {}) => unwrap<PageResult<Announcement>>(http.get('/announcements', { params })),
-  upload: (file: File) => { const body = new FormData(); body.append('file', file); return unwrap<UploadResult>(http.post('/media/images', body)) },
+  upload: (file: File) => { const body = new FormData(); body.append('file', file); return unwrap<UploadResult>(http.post('/media/images', body, { timeout: 60000 })) },
 }
 export const itemApi = {
   list: (params: Params) => unwrap<PageResult<Item>>(http.get('/items', { params })),

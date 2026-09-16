@@ -24,6 +24,11 @@ http.interceptors.request.use((config) => {
       if (token) config.headers.Authorization = `Bearer ${token}`
     } catch { localStorage.removeItem(TOKEN_KEY) }
   }
+  if (config.data instanceof FormData) {
+    // @ts-ignore
+    config.headers = { ...config.headers }
+    delete config.headers['Content-Type']
+  }
   return config
 })
 
@@ -38,7 +43,11 @@ http.interceptors.response.use(
   },
   (error: AxiosError<ApiResult<unknown>>) => {
     const status = error.response?.status
-    const message = error.response?.data?.msg || (error.code === 'ECONNABORTED' ? '请求超时，请稍后重试' : '网络连接失败')
+    const backendMsg = error.response?.data?.msg
+    const message = backendMsg
+      || (status === 413 ? '文件过大，请压缩后重试' : '')
+      || (status ? `服务器错误 (${status})，请稍后重试` : '')
+      || (error.code === 'ECONNABORTED' ? '请求超时，请稍后重试' : '网络连接失败')
     if (status === 401) clearMatchingSession(error.config)
     if (status !== 401) ElMessage.error(message)
     return Promise.reject(new Error(message))
