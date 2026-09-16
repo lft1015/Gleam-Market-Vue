@@ -11,9 +11,12 @@ import {
   Users,
   X,
 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const mobileOpen = ref(false)
+const isDashboard = computed(() => route.path === '/admin')
 const nav = [
   { to: '/admin', label: '数据概览', icon: LayoutDashboard },
   { to: '/admin/reviews', label: '内容审核', icon: ClipboardCheck },
@@ -54,19 +57,16 @@ const nav = [
         <BellRing :size="17" />返回用户端
       </RouterLink>
     </aside>
-    <div class="admin-content">
-      <header class="admin-topbar">
-        <button class="menu-button" @click="mobileOpen = true">
-          菜单
-        </button>
-        <div>
-          <strong>平台运营与内容治理</strong>
-          <span>保持社区信息真实、友善、有序</span>
-        </div>
-      </header>
-      <main>
+    <div class="admin-content" style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+      <main style="flex:1;display:flex;flex-direction:column">
         <RouterView />
       </main>
+      <footer v-if="isDashboard" class="admin-topbar" style="justify-content:center;border-top:1px solid var(--line);border-bottom:none">
+        <div style="display:flex;flex-direction:row;align-items:center;gap:12px;max-width:100%">
+          <strong>平台运营与内容治理</strong>
+          <span style="color:var(--ink-500);font-size:12px">保持社区信息真实、友善、有序</span>
+        </div>
+      </footer>
     </div>
   </div>
 </template>

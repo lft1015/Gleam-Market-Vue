@@ -23,7 +23,7 @@ const metrics = [
 ] as const
 </script>
 <template>
-  <div>
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column">
     <div class="page-heading">
       <div>
         <h1>数据概览</h1>
@@ -48,8 +48,8 @@ const metrics = [
     <div class="section-heading">
       <h2>运营待办</h2>
     </div>
-    <div class="surface table-surface">
-      <el-row :gutter="16">
+    <div class="surface table-surface" style="flex:1;margin-bottom:2px;display:flex;flex-direction:column">
+      <el-row :gutter="16" justify="center" align="middle" style="flex:1">
         <el-col :xs="24" :sm="12">
           <el-result
             icon="warning"
