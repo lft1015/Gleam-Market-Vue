@@ -36,7 +36,9 @@ onMounted(async () => {
     <div v-if="announcements[0]" class="announcement-strip">
       <Bell :size="17" />
       <strong>平台公告</strong>
-      <span>{{ announcements[0].title }}：{{ announcements[0].content }}</span>
+      <div class="announce-scroll">
+        <span>{{ announcements[0].title }}：{{ announcements[0].content }}</span>
+      </div>
     </div>
     <section class="hero-band">
       <div class="hero-copy">
@@ -97,3 +99,19 @@ onMounted(async () => {
     <el-empty v-else description="暂时没有失物信息" />
   </div>
 </template>
+<style scoped>
+.announce-scroll {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.announce-scroll span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
