@@ -6,9 +6,115 @@ import dayjs from 'dayjs'
 import { lostFoundApi } from '@/api'
 import { parseImages } from '@/utils/format'
 import ImageUploader from '@/components/ImageUploader.vue'
-const route=useRoute();const router=useRouter();const id=route.params.id?Number(route.params.id):0;const editing=Boolean(id);const loading=ref(editing);const saving=ref(false)
-const form=reactive({type:'LOST',title:'',description:'',location:'',contact:'',lostFoundTime:'',images:[] as string[]})
-async function submit(){if(!form.title.trim()||!form.location.trim()||!form.contact.trim()||!form.lostFoundTime)return ElMessage.warning('请完整填写必填信息');saving.value=true;try{const body={...form,images:JSON.stringify(form.images),lostFoundTime:dayjs(form.lostFoundTime).format('YYYY-MM-DD HH:mm:ss')};editing?await lostFoundApi.update(id,body):await lostFoundApi.create(body);ElMessage.success(editing?'信息已更新并重新提交审核':'信息已发布，等待平台审核');router.push(editing?`/lost-found/${id}`:'/me')}finally{saving.value=false}}
-onMounted(async()=>{if(editing){try{const value=await lostFoundApi.get(id);Object.assign(form,{type:value.type,title:value.title,description:value.description||'',location:value.location,contact:value.contact,lostFoundTime:value.lostTime,images:parseImages(value.images)})}finally{loading.value=false}}})
+
+const route = useRoute()
+const router = useRouter()
+const id = route.params.id ? Number(route.params.id) : 0
+const editing = Boolean(id)
+const loading = ref(editing)
+const saving = ref(false)
+const form = reactive({
+  type: 'LOST',
+  title: '',
+  description: '',
+  location: '',
+  contact: '',
+  lostFoundTime: '',
+  images: [] as string[],
+})
+
+async function submit() {
+  if (!form.title.trim() || !form.location.trim() || !form.contact.trim() || !form.lostFoundTime) {
+    return ElMessage.warning('请完整填写必填信息')
+  }
+  saving.value = true
+  try {
+    const body = {
+      ...form,
+      images: JSON.stringify(form.images),
+      lostFoundTime: dayjs(form.lostFoundTime).format('YYYY-MM-DD HH:mm:ss'),
+    }
+    editing ? await lostFoundApi.update(id, body) : await lostFoundApi.create(body)
+    ElMessage.success(editing ? '信息已更新并重新提交审核' : '信息已发布，等待平台审核')
+    router.push(editing ? `/lost-found/${id}` : '/me')
+  } finally { saving.value = false }
+}
+
+onMounted(async () => {
+  if (editing) {
+    try {
+      const value = await lostFoundApi.get(id)
+      Object.assign(form, {
+        type: value.type,
+        title: value.title,
+        description: value.description || '',
+        location: value.location,
+        contact: value.contact,
+        lostFoundTime: value.lostTime,
+        images: parseImages(value.images),
+      })
+    } finally { loading.value = false }
+  }
+})
 </script>
-<template><div class="form-shell"><div class="page-heading"><div><h1>{{ editing?'编辑失物信息':'发布失物信息' }}</h1><p>清晰的时间、地点和特征有助于快速找到物主</p></div></div><div class="surface form-surface" v-loading="loading"><el-form label-position="top"><el-form-item label="信息类型" required><el-segmented v-model="form.type" :options="[{label:'我丢了东西',value:'LOST'},{label:'我捡到东西',value:'FOUND'}]" /></el-form-item><el-form-item label="物品图片"><ImageUploader v-model="form.images" :limit="6" /></el-form-item><el-form-item label="标题" required><el-input v-model="form.title" maxlength="100" show-word-limit /></el-form-item><el-form-item label="详细描述"><el-input v-model="form.description" type="textarea" :rows="5" maxlength="2000" show-word-limit /></el-form-item><el-row :gutter="14"><el-col :xs="24" :sm="12"><el-form-item label="发生地点" required><el-input v-model="form.location" maxlength="200" /></el-form-item></el-col><el-col :xs="24" :sm="12"><el-form-item label="发生时间" required><el-date-picker v-model="form.lostFoundTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width:100%" /></el-form-item></el-col></el-row><el-form-item label="联系方式" required><el-input v-model="form.contact" maxlength="100" /></el-form-item><div class="form-actions"><el-button @click="router.back()">取消</el-button><el-button type="primary" :loading="saving" @click="submit">{{ editing?'保存并重新审核':'提交审核' }}</el-button></div></el-form></div></div></template>
+<template>
+  <div class="form-shell">
+    <div class="page-heading">
+      <div>
+        <h1>{{ editing ? '编辑失物信息' : '发布失物信息' }}</h1>
+        <p>清晰的时间、地点和特征有助于快速找到物主</p>
+      </div>
+    </div>
+    <div class="surface form-surface" v-loading="loading">
+      <el-form label-position="top">
+        <el-form-item label="信息类型" required>
+          <el-segmented
+            v-model="form.type"
+            :options="[{ label: '我丢了东西', value: 'LOST' }, { label: '我捡到东西', value: 'FOUND' }]"
+          />
+        </el-form-item>
+        <el-form-item label="物品图片">
+          <ImageUploader v-model="form.images" :limit="6" />
+        </el-form-item>
+        <el-form-item label="标题" required>
+          <el-input v-model="form.title" maxlength="100" show-word-limit />
+        </el-form-item>
+        <el-form-item label="详细描述">
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            :rows="5"
+            maxlength="2000"
+            show-word-limit
+          />
+        </el-form-item>
+        <el-row :gutter="14">
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="发生地点" required>
+              <el-input v-model="form.location" maxlength="200" />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="发生时间" required>
+              <el-date-picker
+                v-model="form.lostFoundTime"
+                type="datetime"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="联系方式" required>
+          <el-input v-model="form.contact" maxlength="100" />
+        </el-form-item>
+        <div class="form-actions">
+          <el-button @click="router.back()">取消</el-button>
+          <el-button type="primary" :loading="saving" @click="submit">
+            {{ editing ? '保存并重新审核' : '提交审核' }}
+          </el-button>
+        </div>
+      </el-form>
+    </div>
+  </div>
+</template>

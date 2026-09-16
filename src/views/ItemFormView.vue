@@ -6,9 +6,117 @@ import { commonApi, itemApi } from '@/api'
 import type { Category } from '@/types'
 import { parseImages } from '@/utils/format'
 import ImageUploader from '@/components/ImageUploader.vue'
-const route = useRoute(); const router = useRouter(); const id = route.params.id ? Number(route.params.id) : 0; const editing = Boolean(id); const loading = ref(editing); const saving = ref(false); const categories = ref<Category[]>([])
-const form = reactive({ title: '', description: '', price: undefined as number | undefined, originalPrice: undefined as number | undefined, category: '', images: [] as string[] })
-async function submit() { if (!form.title.trim() || form.price == null || !form.category) return ElMessage.warning('请完整填写标题、价格和分类'); saving.value = true; try { const body = { ...form, images: JSON.stringify(form.images) }; editing ? await itemApi.update(id, body) : await itemApi.create(body); ElMessage.success(editing ? '商品已更新并提交审核' : '商品已发布，等待平台审核'); router.push(editing ? `/market/${id}` : '/me') } finally { saving.value = false } }
-onMounted(async () => { categories.value = await commonApi.categories().catch(() => []); if (editing) { try { const item = await itemApi.get(id); Object.assign(form, { title: item.title, description: item.description || '', price: item.price, originalPrice: item.originalPrice, category: item.category, images: parseImages(item.images) }) } finally { loading.value = false } } })
+
+const route = useRoute()
+const router = useRouter()
+const id = route.params.id ? Number(route.params.id) : 0
+const editing = Boolean(id)
+const loading = ref(editing)
+const saving = ref(false)
+const categories = ref<Category[]>([])
+const form = reactive({
+  title: '',
+  description: '',
+  price: undefined as number | undefined,
+  originalPrice: undefined as number | undefined,
+  category: '',
+  images: [] as string[],
+})
+
+async function submit() {
+  if (!form.title.trim() || form.price == null || !form.category) {
+    return ElMessage.warning('请完整填写标题、价格和分类')
+  }
+  saving.value = true
+  try {
+    const body = { ...form, images: JSON.stringify(form.images) }
+    editing ? await itemApi.update(id, body) : await itemApi.create(body)
+    ElMessage.success(editing ? '商品已更新并提交审核' : '商品已发布，等待平台审核')
+    router.push(editing ? `/market/${id}` : '/me')
+  } finally { saving.value = false }
+}
+
+onMounted(async () => {
+  categories.value = await commonApi.categories().catch(() => [])
+  if (editing) {
+    try {
+      const item = await itemApi.get(id)
+      Object.assign(form, {
+        title: item.title,
+        description: item.description || '',
+        price: item.price,
+        originalPrice: item.originalPrice,
+        category: item.category,
+        images: parseImages(item.images),
+      })
+    } finally { loading.value = false }
+  }
+})
 </script>
-<template><div class="form-shell"><div class="page-heading"><div><h1>{{ editing ? '编辑商品' : '发布闲置' }}</h1><p>信息越清楚，越容易遇见合适的新主人</p></div></div><div class="surface form-surface" v-loading="loading"><el-form label-position="top"><el-form-item label="商品图片"><ImageUploader v-model="form.images" :limit="6" /></el-form-item><el-form-item label="商品标题" required><el-input v-model="form.title" maxlength="80" show-word-limit placeholder="例如：九成新机械键盘" /></el-form-item><el-form-item label="商品描述"><el-input v-model="form.description" type="textarea" :rows="5" maxlength="2000" show-word-limit placeholder="说明成色、购买时间、配件和交易方式" /></el-form-item><el-row :gutter="14"><el-col :xs="24" :sm="8"><el-form-item label="售价" required><el-input-number v-model="form.price" :min="0" :precision="2" controls-position="right" style="width:100%" /></el-form-item></el-col><el-col :xs="24" :sm="8"><el-form-item label="原价"><el-input-number v-model="form.originalPrice" :min="0" :precision="2" controls-position="right" style="width:100%" /></el-form-item></el-col><el-col :xs="24" :sm="8"><el-form-item label="分类" required><el-select v-model="form.category" style="width:100%" placeholder="选择分类"><el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.name" /></el-select></el-form-item></el-col></el-row><div class="form-actions"><el-button @click="router.back()">取消</el-button><el-button type="primary" :loading="saving" @click="submit">{{ editing ? '保存并重新审核' : '提交审核' }}</el-button></div></el-form></div></div></template>
+<template>
+  <div class="form-shell">
+    <div class="page-heading">
+      <div>
+        <h1>{{ editing ? '编辑商品' : '发布闲置' }}</h1>
+        <p>信息越清楚，越容易遇见合适的新主人</p>
+      </div>
+    </div>
+    <div class="surface form-surface" v-loading="loading">
+      <el-form label-position="top">
+        <el-form-item label="商品图片">
+          <ImageUploader v-model="form.images" :limit="6" />
+        </el-form-item>
+        <el-form-item label="商品标题" required>
+          <el-input v-model="form.title" maxlength="80" show-word-limit placeholder="例如：九成新机械键盘" />
+        </el-form-item>
+        <el-form-item label="商品描述">
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            :rows="5"
+            maxlength="2000"
+            show-word-limit
+            placeholder="说明成色、购买时间、配件和交易方式"
+          />
+        </el-form-item>
+        <el-row :gutter="14">
+          <el-col :xs="24" :sm="8">
+            <el-form-item label="售价" required>
+              <el-input-number
+                v-model="form.price"
+                :min="0"
+                :precision="2"
+                controls-position="right"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="8">
+            <el-form-item label="原价">
+              <el-input-number
+                v-model="form.originalPrice"
+                :min="0"
+                :precision="2"
+                controls-position="right"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="8">
+            <el-form-item label="分类" required>
+              <el-select v-model="form.category" style="width: 100%" placeholder="选择分类">
+                <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.name" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div class="form-actions">
+          <el-button @click="router.back()">取消</el-button>
+          <el-button type="primary" :loading="saving" @click="submit">
+            {{ editing ? '保存并重新审核' : '提交审核' }}
+          </el-button>
+        </div>
+      </el-form>
+    </div>
+  </div>
+</template>
