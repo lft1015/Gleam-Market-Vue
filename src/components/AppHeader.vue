@@ -29,7 +29,7 @@ async function logout() {
       <div class="header-actions">
         <template v-if="auth.isLoggedIn">
           <el-tooltip content="我的收藏"><RouterLink class="icon-link" to="/favorites"><Heart :size="19" /></RouterLink></el-tooltip>
-          <el-badge :value="auth.unreadCount" :hidden="!auth.unreadCount" :max="99">
+          <el-badge is-dot :hidden="!auth.unreadCount">
             <el-tooltip content="消息"><RouterLink class="icon-link" to="/messages"><MessageCircle :size="19" /></RouterLink></el-tooltip>
           </el-badge>
           <RouterLink v-if="auth.isAdmin" class="admin-link" to="/admin"><ShieldCheck :size="17" />管理后台</RouterLink>

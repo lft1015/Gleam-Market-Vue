@@ -69,14 +69,7 @@ onMounted(async () => {
 onBeforeUnmount(() => window.clearInterval(timer))
 </script>
 <template>
-  <div>
-    <div class="page-heading">
-      <div>
-        <h1>站内消息</h1>
-        <p>与卖家或买家直接沟通交易细节</p>
-      </div>
-    </div>
-    <div class="surface message-shell" :class="{ 'has-chat': activeId }">
+  <div class="surface message-shell" :class="{ 'has-chat': activeId }">
       <aside class="conversation-list">
         <button
           v-for="item in conversations"
@@ -126,5 +119,4 @@ onBeforeUnmount(() => window.clearInterval(timer))
         </div>
       </section>
     </div>
-  </div>
 </template>
