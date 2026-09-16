@@ -45,23 +45,23 @@ onMounted(load)
     >
       <template #content>
         <div class="surface table-surface">
-          <el-table :data="records">
-            <el-table-column prop="targetLabel" label="举报对象" min-width="180">
+          <el-table :data="records" height="calc(100vh - 330px)">
+            <el-table-column prop="targetLabel" label="举报对象" min-width="180" align="center">
               <template #default="{ row }">
                 {{ row.targetLabel || `${row.targetType} #${row.targetId}` }}
               </template>
             </el-table-column>
-            <el-table-column prop="reason" label="原因" min-width="120" />
-            <el-table-column label="风险" width="90">
+            <el-table-column prop="reason" label="原因" min-width="120" align="center" />
+            <el-table-column label="风险" width="90" align="center">
               <template #default="{ row }"><StatusTag :status="row.riskLevel" /></template>
             </el-table-column>
-            <el-table-column label="状态" width="100">
+            <el-table-column label="状态" width="100" align="center">
               <template #default="{ row }"><StatusTag :status="row.status" /></template>
             </el-table-column>
-            <el-table-column label="提交时间" width="150">
+            <el-table-column label="提交时间" width="150" align="center">
               <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
             </el-table-column>
-            <el-table-column label="处理反馈" min-width="180">
+            <el-table-column label="处理反馈" min-width="180" align="center">
               <template #default="{ row }">
                 {{ row.reviewNote || (row.status === 'PENDING' ? '等待平台处理' : '暂无备注') }}
               </template>

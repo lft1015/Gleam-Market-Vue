@@ -85,7 +85,7 @@ onMounted(load)
           <el-table-column align="center" label="更新时间" width="145">
             <template #default="{ row }">{{ formatTime(row.updateTime) }}</template>
           </el-table-column>
-          <el-table-column align="center" label="操作" width="180" fixed="right">
+          <el-table-column align="center" label="操作" min-width="200" fixed="right">
             <template #default="{ row }">
               <el-button text type="primary" @click="$router.push(`/market/${row.id}/edit`)">
                 <Edit3 :size="14" />编辑
