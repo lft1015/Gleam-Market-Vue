@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from 'lucide-vue-next'
 import { adminApi } from '@/api'
 import type { Category } from '@/types'
 
 const rows = ref<Category[]>([])
-const loading = ref(true)
+const loading = ref(false)
+const page = ref(1)
+const size = 10
+const total = computed(() => rows.value.length)
+const pagedRows = computed(() => {
+  const start = (page.value - 1) * size
+  return rows.value.slice(start, start + size)
+})
 const open = ref(false)
 const editingId = ref(0)
 const saving = ref(false)
@@ -14,7 +21,7 @@ const form = reactive({ name: '', sortOrder: 0 })
 
 async function load() {
   loading.value = true
-  try { rows.value = await adminApi.categories() } finally { loading.value = false }
+  try { rows.value = await adminApi.categories(); page.value = 1 } finally { loading.value = false }
 }
 
 function edit(row?: Category) {
@@ -57,7 +64,7 @@ onMounted(load)
       </el-button>
     </div>
     <div class="surface table-surface">
-      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
+      <el-table v-loading="loading" :data="pagedRows" height="calc(100vh - 300px)">
         <el-table-column prop="name" label="分类名称" min-width="180" align="center" />
         <el-table-column prop="sortOrder" label="排序" width="100" align="center" />
         <el-table-column prop="createTime" label="创建时间" min-width="150" align="center" />
@@ -72,6 +79,14 @@ onMounted(load)
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination">
+        <el-pagination
+          v-model:current-page="page"
+          layout="prev, pager, next"
+          :page-size="size"
+          :total="total"
+        />
+      </div>
     </div>
     <el-dialog v-model="open" :title="editingId ? '编辑分类' : '新建分类'" width="min(430px, 92vw)">
       <el-form label-position="top">

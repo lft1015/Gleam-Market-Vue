@@ -103,7 +103,7 @@ onMounted(load)
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="角色" width="110" align="center" />
+        <el-table-column prop="role" label="角色" min-width="120" align="center" />
         <el-table-column label="状态" width="100" align="center">
           <template #default="{ row }">
             <StatusTag :status="row.status" />
