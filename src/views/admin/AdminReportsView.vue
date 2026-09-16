@@ -73,7 +73,7 @@ onMounted(load)
           <el-radio-button value="">全部</el-radio-button>
         </el-radio-group>
       </div>
-      <el-table v-loading="loading" :data="rows">
+      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
         <el-table-column
           prop="targetLabel"
           label="举报对象"

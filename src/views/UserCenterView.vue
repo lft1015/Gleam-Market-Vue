@@ -74,7 +74,7 @@ onMounted(load)
             <Plus :size="15" />发布
           </el-button>
         </div>
-        <el-table v-if="tab === 'items'" :data="items">
+        <el-table v-if="tab === 'items'" :data="items" height="calc(100vh - 330px)">
           <el-table-column prop="title" label="商品" min-width="180" align="center" />
           <el-table-column align="center" label="价格" width="100">
             <template #default="{ row }">{{ formatMoney(row.price) }}</template>
@@ -110,7 +110,7 @@ onMounted(load)
             </template>
           </el-table-column>
         </el-table>
-        <el-table v-else-if="tab === 'lost'" :data="lost">
+        <el-table v-else-if="tab === 'lost'" :data="lost" height="calc(100vh - 330px)">
           <el-table-column prop="title" label="标题" min-width="180" align="center" />
           <el-table-column align="center" label="类型" width="80">
             <template #default="{ row }">{{ row.type === 'LOST' ? '寻物' : '招领' }}</template>
@@ -148,7 +148,7 @@ onMounted(load)
             </template>
           </el-table-column>
         </el-table>
-        <el-table v-else :data="claims">
+        <el-table v-else :data="claims" height="calc(100vh - 330px)">
           <el-table-column align="center" prop="lostFoundTitle" label="认领信息" min-width="180">
             <template #default="{ row }">
               {{ row.lostFoundTitle || `失物 #${row.lostFoundId}` }}

@@ -57,7 +57,7 @@ onMounted(load)
       </el-button>
     </div>
     <div class="surface table-surface">
-      <el-table v-loading="loading" :data="rows">
+      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
         <el-table-column prop="name" label="分类名称" min-width="180" align="center" />
         <el-table-column prop="sortOrder" label="排序" width="100" align="center" />
         <el-table-column prop="createTime" label="创建时间" min-width="150" align="center" />

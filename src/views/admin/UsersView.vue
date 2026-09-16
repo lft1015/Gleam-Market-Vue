@@ -87,8 +87,8 @@ onMounted(load)
           查询
         </el-button>
       </form>
-      <el-table v-loading="loading" :data="rows">
-        <el-table-column label="用户" min-width="180" align="center">
+      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
+        <el-table-column label="用户" min-width="180">
           <template #default="{ row }">
             <div style="display: flex; align-items: center; gap: 9px">
               <el-avatar :size="34" :src="row.avatar">

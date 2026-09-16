@@ -73,7 +73,7 @@ onMounted(load)
       </el-button>
     </div>
     <div class="surface table-surface">
-      <el-table v-loading="loading" :data="rows">
+      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
         <el-table-column prop="title" label="标题" min-width="180" align="center" />
         <el-table-column align="center" prop="content" label="内容" min-width="260" show-overflow-tooltip />
         <el-table-column align="center" label="发布状态" width="100">

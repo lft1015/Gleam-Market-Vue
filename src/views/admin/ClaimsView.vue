@@ -64,7 +64,7 @@ onMounted(load)
           <el-radio-button value="">全部</el-radio-button>
         </el-radio-group>
       </div>
-      <el-table v-loading="loading" :data="rows">
+      <el-table v-loading="loading" :data="rows" height="calc(100vh - 300px)">
         <el-table-column
           prop="lostFoundTitle"
           label="失物信息"
@@ -83,7 +83,7 @@ onMounted(load)
         <el-table-column
           prop="claimantNickname"
           label="申请人"
-          width="120"
+          min-width="120"
           align="center"
         >
           <template #default="{ row }">
